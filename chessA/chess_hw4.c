@@ -5,12 +5,12 @@ int footSteps(int chess[8][8], int i, int j, int dx, int dy){
     int count=1;
     int color=chess[i][j];
 
-        while(i+dx>=0 && i+dx<8 && j+dy>=0 && j+dy<8 && chess[i+dx][j+dy] == 3-color){
+        while(inside(i+dx,j+dy) && chess[i+dx][j+dy] == 3-color){
             i += dx;
             j += dy;
             count++;
         }
-        if(chess[i][j] == 3-color && i+dx>=0 && i+dx<8 && j+dy>=0 && j+dy<8 && chess[i+dx][j+dy] == 0){
+        if(chess[i][j] == 3-color && inside(i+dx,j+dy) && chess[i+dx][j+dy] == 0){
             return count;
         }
         else return 0;
