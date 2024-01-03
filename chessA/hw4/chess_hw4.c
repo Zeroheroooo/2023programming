@@ -1,0 +1,95 @@
+#include <stdio.h>
+#define inside(x,y) (x>=0 && x<8 && y>=0 && y<8)
+
+int footSteps(int chess[8][8], int i, int j, int dx, int dy){
+    int count=1;
+    int color=chess[i][j];
+
+        while(inside(i+dx,j+dy) && chess[i+dx][j+dy] == 3-color){
+            i += dx;
+            j += dy;
+            count++;
+        }
+        if(chess[i][j] == 3-color && inside(i+dx,j+dy) && chess[i+dx][j+dy] == 0){
+            return count;
+        }
+        else return 0;
+}
+
+void direction(int chess[8][8], int next[8][8], int i, int j){
+    int steps = 0;
+    for(int dx=-1;dx<=1;dx++){
+        for(int dy=-1;dy<=1;dy++){
+            if(!(dx == 0 && dy == 0)){
+                steps = footSteps(chess,i,j,dx,dy);
+                if(steps != 0){next[i+steps*dx][j+steps*dy] = 1;}
+            }    
+        }
+    }
+}
+
+void checkAvailablePosition(int color,int next[8][8],int chess[8][8]){
+    for(int i=0;i<8;i++){
+        for(int j=0;j<8;j++){
+            next[i][j] = 0;
+        }
+    }
+
+    for(int i=0;i<8;i++){
+        for(int j=0;j<8;j++){
+            if(chess[i][j] == color) direction(chess,next,i,j);
+        }
+    }
+
+    if(color == 1) printf("black available:\n");
+    else printf("white available:\n");
+    
+    for(int i=0;i<8;i++){
+        for(int j=0;j<8;j++){
+            if(next[i][j] == 1) printf("(%d,%d) ",i,j);
+        }
+    }
+    printf("\n");
+
+
+}
+
+
+int main(){
+    /*int chess[8][8]={{0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0},
+                    {0,0,0,2,1,0,0,0},
+                    {0,0,0,1,2,0,0,0},
+                    {0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0}
+                    };
+    */ 
+
+    /*int chess[8][8]={{2,1,1,1,1,1,1,0},
+                    {2,1,2,1,1,2,1,0},
+                    {2,2,1,1,1,2,1,1},
+                    {2,1,2,1,1,2,1,0},
+                    {2,1,2,2,2,2,1,0},
+                    {2,2,2,2,2,2,1,0},
+                    {2,2,2,1,1,2,0,0},
+                    {0,1,0,0,0,0,0,0}
+                    };
+    */
+    int next[8][8];
+    int chess[8][8];
+
+    for(int i=0;i<8;i++){
+        for(int j=0;j<8;j++){
+            scanf("%d",&chess[i][j]);
+        }
+    }
+    
+    checkAvailablePosition(1,next,chess);//black
+    checkAvailablePosition(2,next,chess);//white
+
+
+    
+}
+
