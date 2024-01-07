@@ -16,16 +16,21 @@ int footSteps(int chess[8][8], int i, int j, int dx, int dy){
         else return 0;
 }
 
-void direction(int chess[8][8], int next[8][8], int i, int j){
+int direction(int chess[8][8], int next[8][8], int i, int j){
     int steps = 0;
+    int canFlip=0;
     for(int dx=-1;dx<=1;dx++){
         for(int dy=-1;dy<=1;dy++){
             if(!(dx == 0 && dy == 0)){
                 steps = footSteps(chess,i,j,dx,dy);
-                if(steps != 0){next[i+steps*dx][j+steps*dy] = 1;}
+                if(steps != 0){
+                    next[i+steps*dx][j+steps*dy] = 1;
+                    canFlip += steps-1;
+                }
             }    
         }
     }
+    return canFlip;
 }
 
 void checkAvailablePosition(int color,int next[8][8],int chess[8][8]){
@@ -62,13 +67,16 @@ void flip(int chess[8][8], int i, int j){
                     for(int k=1;k<=steps;k++){
                         chess[i+k*dx][j+k*dy] = chess[i][j];
                     }
-            }    
+                }
+            }  
         }
     }
 
 }
 
-/*void countflip(){
+/*int countflip(int chess,int next,int i,int j){
+    int canFlip = direction();
+
 
 }*/
 /*
@@ -106,7 +114,7 @@ int main(){
                     };
     
 
-    int next[8][8];
+    int next[8][8],i,j;
     /*int chess[8][8];
 
     for(int i=0;i<8;i++){
@@ -116,12 +124,27 @@ int main(){
     }
     */
 
-    while(1){
+    //while(1){
         checkAvailablePosition(1,next,chess);//black
-        if(noMove(next)) break;
+        printf("black your turn : i j\n");
+        scanf("%d %d",&i,&j);
+        chess[i][j] = 1;
+        flip(chess,i,j);
+
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                printf("%d ",chess[i][j]);
+            }
+            printf("\n");
+        }
+
+
+
+
+
+
         checkAvailablePosition(2,next,chess);//white
-        if(noMove(next)) break;
-    }
+   // }
     printf("finish\n");
 
 
