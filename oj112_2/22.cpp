@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <cmath>//abs
 using namespace std;
 
 class Date{
@@ -12,13 +11,20 @@ public:
 
     Date(string &ymd):date(ymd){
 
-        string y=date.substr(0,4),m=date.substr(5,2),d=date.substr(8,2);
+        int i;
+        string y="",m="",d="";
+        for(i=0;i<4;i++)//year
+                y = y + date[i];
+        for(i=5;i<7;i++)//month
+                m = m + date[i];
+        for(i=8;i<=9;i++)//day
+                d = d + date[i];
         //day
         days += stoi(d);
 
         //month
         int symbol[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-        int i=1;
+        i=1;
         while(i < stoi(m))
             days += symbol[i++];
 
@@ -30,10 +36,12 @@ public:
         if(stoi(m) > 2 && (!(stoi(y)%4) && stoi(y)%100 || !(stoi(y)%400))) count++;
         days += (stoi(y) - 1900)*365 + count;
     }
-
     string toString() const{return date;}
 
-    int operator-(const Date &d2) const{return abs(days - d2.days);}
+    int operator-(const Date &d2) const{
+        if(days > d2.days) return days - d2.days;
+        return d2.days - days;
+    }
 };
 
 int main(){
