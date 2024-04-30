@@ -1,8 +1,8 @@
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 class Fraction {
-
 public:
   Fraction() : numerator(0), denominator(1) {}
 
@@ -12,102 +12,85 @@ public:
     denominator = m;
   }
 
-  int getNumerator() const {
-    return numerator;
-  }
+  int getNumerator() const {return numerator;}
 
-  int getDenominator() const {
-    return denominator;
-  }
+  int getDenominator() const {return denominator;}
 
-  void setNumerator(int n) {
-    numerator = n;
-  }
+  void setNumerator(int n) {numerator = n;}
 
   void setDenominator(int m) {
     if(m == 0)
       throw "divided by zero";
     denominator = m;
   }
+  ///////////////////////////////////////////////////////////////////////////////////////////
 
   void display(){
-      if (denominator != 1)
-        cout << "(" << numerator << "/" << denominator << ")" << endl;
-      else
-        cout << numerator << endl;
+      cout << *this;
   }
 
-  friend std::ostream& operator << (std::ostream& out, const Fraction &f) {
+  friend ostream& operator << (ostream& out, Fraction f) {
+    f.irreducible();
     if (f.denominator != 1)
     	out << "(" << f.numerator << "/" << f.denominator << ")";
     else
-        out << f.numerator;
+        out << "(" << f.numerator << ")";
     return out;
   }
 
-  Fraction operator! ()
-  {
-      return Fraction(denominator, numerator);
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  void irreducible(){
+    int n,maxi=1,i;
+
+    n = (getNumerator() < getDenominator()) ? abs(getNumerator()) : abs(getDenominator());
+    for(i=1;i<=n;i++){
+      if(getNumerator() % i == 0 && getDenominator() % i == 0)
+        maxi = i;
+    }
+    setNumerator(getNumerator() / maxi);
+    setDenominator(getDenominator() / maxi);
+    if(getNumerator() == 0) setDenominator(1);
+  }
+
+  Fraction operator+(Fraction f2){
+    Fraction f3;
+    f3.setNumerator(getNumerator() * f2.getDenominator() + f2.getNumerator() * getDenominator());
+    f3.setDenominator(getDenominator() * f2.getDenominator());
+    return f3;
+  }
+
+  Fraction operator-(Fraction f2){
+    Fraction f3;
+    f3.setNumerator((getNumerator() * f2.getDenominator()) - (f2.getNumerator() * getDenominator()));
+    f3.setDenominator(getDenominator() * f2.getDenominator());
+    //cout << "***" << getNumerator() << " " << getDenominator() << " " << f2.getNumerator() << " " <<  f2.getDenominator() << endl;
+    return f3;
+  }
+
+  Fraction operator*(Fraction f2){
+    Fraction f3;
+    f3.setNumerator(getNumerator() * f2.getNumerator());
+    f3.setDenominator(getDenominator() * f2.getDenominator());
+    return f3;
+  }
+
+  Fraction operator/(Fraction f2){
+    Fraction f3;
+    f3.setNumerator(getNumerator() * f2.getDenominator());
+    f3.setDenominator(getDenominator() * f2.getNumerator());
+    return f3;
+  }
+
+  Fraction operator=(Fraction f2){
+    setNumerator(f2.getNumerator());
+    setDenominator(f2.getDenominator());
+    return *this;
   }
 
 private:
   int numerator, denominator;
 };
-
-Fraction irreducible(Fraction f){
-    int n,maxi=1,i,tmp=1;
-
-    if(f.getNumerator() < 0){
-        f.setNumerator(f.getNumerator() * -1);
-        tmp *= -1;
-    }
-    if(f.getDenominator() < 0){
-        f.setDenominator(f.getDenominator() * -1);
-        tmp *= -1;
-    }
-
-    n = (f.getNumerator() < f.getDenominator()) ? f.getNumerator() : f.getDenominator();
-    for(i=1;i<=n;i++){
-        if(f.getNumerator() % i == 0 && f.getDenominator() % i == 0)
-            maxi = i;
-    }
-    f.setNumerator(f.getNumerator() / maxi * tmp);
-    f.setDenominator(f.getDenominator() / maxi);
-    if(f.getNumerator() == 0) f.setDenominator(1);
-    return f;
-}
-
-Fraction operator+(Fraction f1, Fraction f2){
-    Fraction f3;
-    f3.setNumerator(f1.getNumerator() * f2.getDenominator() + f2.getNumerator() * f1.getDenominator());
-    f3.setDenominator(f1.getDenominator() * f2.getDenominator());
-    f3 = irreducible(f3);
-    return f3;
-}
-
-Fraction operator-(Fraction f1, Fraction f2){
-    Fraction f3;
-    f3.setNumerator((f1.getNumerator() * f2.getDenominator()) - (f2.getNumerator() * f1.getDenominator()));
-    f3.setDenominator(f1.getDenominator() * f2.getDenominator());
-    f3 = irreducible(f3);
-    return f3;
-}
-
-Fraction operator*(Fraction f1, Fraction f2){
-    Fraction f3;
-    f3.setNumerator(f1.getNumerator() * f2.getNumerator());
-    f3.setDenominator(f1.getDenominator() * f2.getDenominator());
-    f3 = irreducible(f3);
-    return f3;
-}
-
-Fraction operator/(Fraction f1, Fraction f2){
-    Fraction f3;
-    f3.setNumerator(f1.getNumerator() * f2.getDenominator());
-    f3.setDenominator(f1.getDenominator() * f2.getNumerator());
-    f3 = irreducible(f3);
-    return f3;
-}
 
 int main()
 {
@@ -116,6 +99,7 @@ int main()
   Fraction f1(n1, m1), f2(n2, m2);
   cout << (f1 + f2) << endl;
   cout << (f1 - f2) << endl;
+  f1.display();
   //cout << (f1 == f2) << endl;
 }
 
